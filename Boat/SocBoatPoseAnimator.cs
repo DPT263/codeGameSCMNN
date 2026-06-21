@@ -40,6 +40,10 @@ public class SocBoatPoseAnimator : MonoBehaviour
     [SerializeField] private float poseSmooth = 14f;
     [SerializeField] private float poseStrength = 1f;
 
+    [Header("Sync")]
+    [SerializeField] private float phaseOffset = 0f;
+    [SerializeField] private bool invertPull = false;
+
     private Quaternion bodyStartRotation;
     private Quaternion headStartRotation;
 
@@ -98,12 +102,20 @@ public class SocBoatPoseAnimator : MonoBehaviour
             return;
         }
 
-        float phase = paddleAnimator.RowPhase;
+        
+        float phase = paddleAnimator.RowPhase + phaseOffset;
         float radians = phase * Mathf.PI * 2f;
 
+        // Dùng Cos để đồng bộ với nhịp nhúng mái chèo xuống nước trong PaddleRowingAnimator.
         // 0 = vươn người ra trước
         // 1 = kéo tay về sau
-        float pull01 = (Mathf.Sin(radians) + 1f) * 0.5f;
+        float pull01 = (Mathf.Cos(radians) + 1f) * 0.5f;
+
+        if (invertPull)
+        {
+            pull01 = 1f - pull01;
+        }
+
         pull01 = Smooth01(pull01);
 
         AnimateBone(

@@ -31,6 +31,13 @@ public class PaddleRowingAnimator : MonoBehaviour
     [Header("Phase")]
     [SerializeField] private float rightPhaseOffset = 0f;
 
+    [Header("Sync From Soc Animation")]
+    [SerializeField] private Animator socAnimator;
+    [SerializeField] private bool syncPhaseFromSocAnimator = true;
+    [SerializeField] private int animatorLayerIndex = 0;
+    [SerializeField] private float socAnimationPhaseOffset = 0f;
+    [SerializeField] private float socAnimationPhaseMultiplier = 1f;
+
     private Quaternion leftStartRotation;
     private Quaternion rightStartRotation;
 
@@ -116,8 +123,26 @@ public class PaddleRowingAnimator : MonoBehaviour
 
         if (maxPower > 0.02f)
         {
-            float direction = moveBackward ? -1f : 1f;
-            rowPhase += Time.deltaTime * rowSpeed * direction;
+            if (syncPhaseFromSocAnimator && socAnimator != null)
+            {
+                AnimatorStateInfo stateInfo;
+
+                if (socAnimator.IsInTransition(animatorLayerIndex))
+                {
+                    stateInfo = socAnimator.GetNextAnimatorStateInfo(animatorLayerIndex);
+                }
+                else
+                {
+                    stateInfo = socAnimator.GetCurrentAnimatorStateInfo(animatorLayerIndex);
+                }
+
+                rowPhase = stateInfo.normalizedTime * socAnimationPhaseMultiplier + socAnimationPhaseOffset;
+            }
+            else
+            {
+                float direction = moveBackward ? -1f : 1f;
+                rowPhase += Time.deltaTime * rowSpeed * direction;
+            }
         }
         else
         {
