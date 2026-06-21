@@ -54,6 +54,11 @@ public class PaddleRowingAnimator : MonoBehaviour
     {
         get { return RowPower > 0.05f; }
     }
+
+    public float RowSpeed
+    {
+        get { return rowSpeed; }
+    }
     private void Awake()
     {
         if (leftPaddlePivot != null)
@@ -113,6 +118,10 @@ public class PaddleRowingAnimator : MonoBehaviour
         {
             float direction = moveBackward ? -1f : 1f;
             rowPhase += Time.deltaTime * rowSpeed * direction;
+        }
+        else
+        {
+            rowPhase = 0f;
         }
 
         float leftPhase = rowPhase;

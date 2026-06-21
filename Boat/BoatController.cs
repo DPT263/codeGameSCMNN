@@ -14,6 +14,9 @@ public class BoatController : MonoBehaviour
     [SerializeField] private Transform rightPaddle;
     [SerializeField] private float paddleAngle = 25f;
     [SerializeField] private float paddleSpeed = 7f;
+    
+    [Header("Legacy Paddle Animation")]
+    [SerializeField] private bool useLegacyPaddleAnimation = false;
 
     private Rigidbody rb;
     private Quaternion leftStartRotation;
@@ -81,7 +84,10 @@ public class BoatController : MonoBehaviour
 
     private void Update()
     {
-        AnimatePaddles();
+        if (useLegacyPaddleAnimation)
+        {
+            AnimatePaddles();
+        }
     }
 
     private void AnimatePaddles()
